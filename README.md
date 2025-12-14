@@ -9,7 +9,7 @@ Track Santa's Christmas Eve journey around the world from YOUR exact location, w
 ## ✨ Features
 
 - 🌍 **Real-time Santa tracking** - See exactly where Santa is on Christmas Eve
-- 📍 **Location-based perspective** - Calculate Santa's distance from YOUR location
+- 📍 **Location-based perspective** - Calculate Santa's distance from YOUR location (opt-in only, with your explicit consent)
 - 🤖 **AI-powered messages** - Get personalized greetings from Santa using Ollama + Llama 3.2
 - 🎨 **Beautiful animations** - Twinkling stars, bouncing sleigh, festive visuals
 - 🔒 **100% Local & Private** - No external API calls, all processing on your machine
@@ -89,6 +89,19 @@ Browser → Python Server (localhost:8000) → Ollama (localhost:11434)
 ```
 
 The Python server acts as a CORS proxy, eliminating the need to configure Ollama with special settings. Everything runs locally!
+
+🔐 Your Privacy & Location Data
+
+We take your privacy seriously:
+
+- Location is 100% optional - The app works perfectly fine without sharing your location
+- Explicit consent required - You must actively click "Share My Location" button
+- Browser-controlled - Your browser's geolocation API handles the permission
+- Never stored - Your coordinates are only used for real-time calculations, never saved
+- Never transmitted - Location data never leaves your browser, not even to the local server
+- Revocable anytime - You can deny or revoke location permission at any time in browser settings
+
+The location feature simply enhances the experience by showing Santa's distance from you. Without it, you can still track Santa globally and get AI-generated messages!
 
 ## 📁 Project Structure
 
@@ -247,8 +260,11 @@ This is a fun, educational project demonstrating:
 - Privacy-first application design
 - Real-time geolocation calculations
 - Creative use of LLMs for personalized content
+- Ethical handling of location data (browser-only, never stored or transmitted)
 
 **Remember**: Santa only comes if you've been nice! 🎄✨
+
+_P.S. - Your location is only used if you explicitly consent, and it never leaves your browser. Santa respects your privacy!_
 
 ---
 

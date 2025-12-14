@@ -18,6 +18,9 @@ Track Santa's Christmas Eve journey around the world from YOUR exact location, w
 
 ## 🎬 Demo
 
+![Santa Tracker Demo](s1.png)
+![Santa Tracker Demo](s2.png)
+
 Santa's journey is calculated based on real Christmas Eve timing - he starts at the International Date Line at 6 PM on December 24th and travels westward, completing his global delivery run by 6 AM on December 25th.
 
 ## 🚀 Quick Start

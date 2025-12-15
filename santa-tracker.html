@@ -29,6 +29,9 @@
           const [santaMessage, setSantaMessage] = useState('');
           const [loadingMessage, setLoadingMessage] = useState(false);
 
+          // Model configuration injected by server
+          const ollamaModel = '{{OLLAMA_MODEL}}';
+
           useEffect(() => {
             const timer = setInterval(() => setCurrentTime(new Date()), 1000);
             return () => clearInterval(timer);
@@ -62,16 +65,16 @@
             const now = new Date();
             const christmasEve = new Date(now.getFullYear(), 11, 24, 18, 0, 0);
             const christmasDay = new Date(now.getFullYear(), 11, 25, 6, 0, 0);
-            
+
             const totalDeliveryHours = 24;
             const hoursIntoDelivery = (now - christmasEve) / (1000 * 60 * 60);
-            
+
             let santaLon, santaLat;
             let status;
             let distance;
             let timeUntil;
             let giftsDelivered;
-            
+
             if (now < christmasEve) {
               santaLon = -180;
               santaLat = 90;
@@ -84,7 +87,7 @@
               santaLat = 45 + Math.sin(progress * Math.PI * 4) * 20;
               status = "Out for delivery!";
               giftsDelivered = Math.floor(progress * 2000000000);
-              
+
               if (userLocation) {
                 const userLon = userLocation.lon;
                 if (santaLon < userLon) {
@@ -126,21 +129,21 @@
 
           const getSantaMessage = async () => {
             if (loadingMessage) return;
-            
+
             setLoadingMessage(true);
             setSantaMessage('');
-            
+
             try {
               const now = new Date();
               const christmasEve = new Date(now.getFullYear(), 11, 24, 18, 0, 0);
               const christmasDay = new Date(now.getFullYear(), 11, 25, 6, 0, 0);
-              
+
               let context = '';
               if (now < christmasEve) {
                 context = 'Santa is at the North Pole preparing for Christmas Eve. The elves are busy wrapping presents.';
               } else if (now >= christmasEve && now < christmasDay) {
                 context = `Santa is currently delivering presents around the world! ${
-                  santaStats?.distance 
+                  santaStats?.distance
                     ? `He is about ${santaStats.distance.toLocaleString()} km away from the user's location.`
                     : 'He is making his way across the globe.'
                 } ${santaStats?.giftsDelivered ? `He has delivered ${santaStats.giftsDelivered.toLocaleString()} gifts so far!` : ''}`;
@@ -157,7 +160,7 @@
                   "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                  model: "llama3.2",
+                  model: ollamaModel,
                   prompt: prompt,
                   stream: false,
                   options: {
@@ -172,7 +175,7 @@
               setSantaMessage(message.trim());
             } catch (error) {
               console.error('Error getting Santa message:', error);
-              setSantaMessage('Ho ho ho! My magic connection seems to be a bit frosty right now. Make sure Ollama is running (ollama serve) and you have llama3.2 installed! 🎅');
+              setSantaMessage(`Ho ho ho! My magic connection seems to be a bit frosty right now. Make sure Ollama is running (ollama serve) and you have ${ollamaModel} installed! 🎅`);
             } finally {
               setLoadingMessage(false);
             }
@@ -205,9 +208,9 @@
                       />
                     ))}
                   </div>
-                  
+
                   <div className="absolute top-8 right-8 w-24 h-24 bg-yellow-100 rounded-full shadow-lg opacity-80" />
-                  
+
                   <div className="relative z-10 text-center py-12">
                     <div className="text-9xl mb-4 animate-bounce">
                       🎅
@@ -313,10 +316,10 @@
                   <div className="bg-gradient-to-br from-red-50 to-green-50 rounded-2xl p-8 shadow-xl mb-6 border-2 border-red-200">
                     <div className="text-center mb-4">
                       <h2 className="text-2xl font-bold text-red-700 mb-2">
-                        🎅 Message from Santa (via Local AI)
+                        🎅 Message from Santa
                       </h2>
                       <p className="text-sm text-gray-600 mb-3">
-                        Powered by Ollama running locally on your machine
+                        Powered by Ollama
                       </p>
                       <button
                         onClick={getSantaMessage}
@@ -326,7 +329,7 @@
                         {loadingMessage ? '🎄 Santa is writing...' : '✨ Get a message from Santa'}
                       </button>
                     </div>
-                    
+
                     {santaMessage && (
                       <div className="bg-white rounded-xl p-6 shadow-inner mt-4 border-2 border-green-200">
                         <p className="text-gray-800 text-lg leading-relaxed italic">
@@ -337,14 +340,6 @@
                         </p>
                       </div>
                     )}
-                    
-                    <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                      <p className="text-xs text-gray-600">
-                        <strong>Setup:</strong> Make sure Ollama is running with: <code className="bg-gray-100 px-2 py-1 rounded">ollama serve</code>
-                        <br />
-                        Install llama3.2: <code className="bg-gray-100 px-2 py-1 rounded">ollama pull llama3.2</code>
-                      </p>
-                    </div>
                   </div>
                 )}
 

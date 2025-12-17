@@ -9,6 +9,9 @@ export default function SantaTracker() {
   const [santaMessage, setSantaMessage] = useState('');
   const [loadingMessage, setLoadingMessage] = useState(false);
 
+  // Model configuration - would be injected by server if using templating
+  const ollamaModel = '{{OLLAMA_MODEL}}';
+
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
@@ -42,18 +45,18 @@ export default function SantaTracker() {
     const now = new Date();
     const christmasEve = new Date(now.getFullYear(), 11, 24, 18, 0, 0); // Dec 24, 6 PM
     const christmasDay = new Date(now.getFullYear(), 11, 25, 6, 0, 0); // Dec 25, 6 AM
-    
+
     // Calculate Santa's current position based on time zones
     // Santa starts at International Date Line (UTC+12) and moves west
     const totalDeliveryHours = 24;
     const hoursIntoDelivery = (now - christmasEve) / (1000 * 60 * 60);
-    
+
     let santaLon, santaLat;
     let status;
     let distance;
     let timeUntil;
     let giftsDelivered;
-    
+
     if (now < christmasEve) {
       // Before Christmas Eve
       santaLon = -180; // North Pole area
@@ -68,7 +71,7 @@ export default function SantaTracker() {
       santaLat = 45 + Math.sin(progress * Math.PI * 4) * 20; // Wavy path
       status = "Out for delivery!";
       giftsDelivered = Math.floor(progress * 2000000000); // 2 billion gifts
-      
+
       if (userLocation) {
         // Calculate if Santa has passed user's longitude
         const userLon = userLocation.lon;
@@ -112,21 +115,21 @@ export default function SantaTracker() {
 
   const getSantaMessage = async () => {
     if (loadingMessage) return;
-    
+
     setLoadingMessage(true);
     setSantaMessage('');
-    
+
     try {
       const now = new Date();
       const christmasEve = new Date(now.getFullYear(), 11, 24, 18, 0, 0);
       const christmasDay = new Date(now.getFullYear(), 11, 25, 6, 0, 0);
-      
+
       let context = '';
       if (now < christmasEve) {
         context = 'Santa is at the North Pole preparing for Christmas Eve. The elves are busy wrapping presents.';
       } else if (now >= christmasEve && now < christmasDay) {
         context = `Santa is currently delivering presents around the world! ${
-          santaStats?.distance 
+          santaStats?.distance
             ? `He is about ${santaStats.distance.toLocaleString()} km away from the user's location.`
             : 'He is making his way across the globe.'
         } ${santaStats?.giftsDelivered ? `He has delivered ${santaStats.giftsDelivered.toLocaleString()} gifts so far!` : ''}`;
@@ -143,7 +146,7 @@ export default function SantaTracker() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "llama3.2",
+          model: ollamaModel,
           prompt: prompt,
           stream: false,
           options: {
@@ -194,10 +197,10 @@ export default function SantaTracker() {
               />
             ))}
           </div>
-          
+
           {/* Moon */}
           <div className="absolute top-8 right-8 w-24 h-24 bg-yellow-100 rounded-full shadow-lg opacity-80" />
-          
+
           {/* Santa and Sleigh */}
           <div className="relative z-10 text-center py-12">
             <div className="text-9xl mb-4 animate-bounce">
@@ -320,7 +323,7 @@ export default function SantaTracker() {
                 {loadingMessage ? '🎄 Santa is writing...' : '✨ Get a message from Santa'}
               </button>
             </div>
-            
+
             {santaMessage && (
               <div className="bg-white rounded-xl p-6 shadow-inner mt-4 border-2 border-green-200">
                 <p className="text-gray-800 text-lg leading-relaxed italic">
@@ -331,7 +334,7 @@ export default function SantaTracker() {
                 </p>
               </div>
             )}
-            
+
             <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
               <p className="text-xs text-gray-600">
                 <strong>Setup:</strong> Make sure Ollama is running with: <code className="bg-gray-100 px-2 py-1 rounded">ollama serve</code>

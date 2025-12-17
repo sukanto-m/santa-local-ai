@@ -10,7 +10,7 @@ Track Santa's Christmas Eve journey around the world from YOUR exact location, w
 
 - 🌍 **Real-time Santa tracking** - See exactly where Santa is on Christmas Eve
 - 📍 **Location-based perspective** - Calculate Santa's distance from YOUR location (opt-in only, with your explicit consent)
-- 🤖 **AI-powered messages** - Get personalized greetings from Santa using Ollama + Llama 3.2
+- 🤖 **AI-powered messages** - Get personalized greetings from Santa using Ollama + configurable LLM models
 - 🎨 **Beautiful animations** - Twinkling stars, bouncing sleigh, festive visuals
 - 🔒 **100% Local & Private** - No external API calls, all processing on your machine
 - ⏱️ **Live countdown** - See when Santa will reach your area
@@ -29,7 +29,7 @@ Santa's journey is calculated based on real Christmas Eve timing - he starts at 
 
 - Python 3.x
 - [Ollama](https://ollama.ai/) installed
-- Llama 3.2 model
+- Llama 3.2 model (3B variant recommended)
 
 ### Installation
 
@@ -42,9 +42,12 @@ Santa's journey is calculated based on real Christmas Eve timing - he starts at 
 2. **Install and setup Ollama**
    ```bash
    # Install Ollama from https://ollama.ai/
-   
-   # Pull the Llama 3.2 model
-   ollama pull llama3.2
+
+   # Pull the Llama 3.2 model (3B variant is the default)
+   ollama pull llama3.2:3b
+
+   # Or use the larger 1B variant for faster responses
+   ollama pull llama3.2:1b
    ```
 
 3. **Start Ollama** (in a separate terminal)
@@ -59,8 +62,43 @@ Santa's journey is calculated based on real Christmas Eve timing - he starts at 
    ```
 
 5. **Open in your browser**
-   
+
    Navigate to: `http://localhost:8000/santa-tracker.html`
+
+## ⚙️ Configuration
+
+The application supports environment variables for customization:
+
+### Environment Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `PORT` | `8000` | Port for the web server |
+| `OLLAMA_URL` | `http://localhost:11434` | Ollama backend URL |
+| `OLLAMA_MODEL` | `llama3.2:3b` | LLM model to use |
+
+### Examples
+
+**Change the application port:**
+```bash
+PORT=8080 python3 server.py
+# Then access via http://localhost:8080/
+```
+
+**Use a different Ollama model:**
+```bash
+OLLAMA_MODEL=mistral:7b python3 server.py
+```
+
+**Connect to remote Ollama instance:**
+```bash
+OLLAMA_URL=http://192.168.1.100:11434 python3 server.py
+```
+
+**Combine multiple settings:**
+```bash
+PORT=3000 OLLAMA_MODEL=phi3:mini OLLAMA_URL=http://my-server:11434 python3 server.py
+```
 
 ## 🎄 How It Works
 
@@ -81,17 +119,18 @@ The app uses **Ollama** running locally to generate personalized Santa messages:
 - Messages are context-aware (Santa's location, distance from you, delivery progress)
 - Each message is unique and generated in real-time
 - Completely private - no data leaves your machine
-- Uses Llama 3.2 for natural, cheerful responses
+- Uses Llama 3.2:3b by default, but supports any Ollama-compatible model
+- Configurable via environment variables for different models and backends
 
 ### Privacy-First Architecture
 
 ```
-Browser → Python Server (localhost:8000) → Ollama (localhost:11434)
+Browser → Python Server (configurable port) → Ollama (configurable URL)
    ↑                                              ↓
    └──────────── Local Machine Only ──────────────┘
 ```
 
-The Python server acts as a CORS proxy, eliminating the need to configure Ollama with special settings. Everything runs locally!
+The Python server acts as a CORS proxy, eliminating the need to configure Ollama with special settings. Everything runs locally by default, but can be configured to connect to remote Ollama instances if needed.
 
 🔐 Your Privacy & Location Data
 
@@ -122,8 +161,11 @@ santa-tracker-local-ai/
 
 **Check Ollama is running:**
 ```bash
-# Verify Ollama is responding
+# Verify Ollama is responding (default URL)
 curl http://localhost:11434/api/tags
+
+# For custom Ollama URL, replace with your configured URL
+curl $OLLAMA_URL/api/tags
 
 # Should return a list of installed models
 ```
@@ -131,7 +173,16 @@ curl http://localhost:11434/api/tags
 **Verify Llama 3.2 is installed:**
 ```bash
 ollama list
-# Should show llama3.2 in the list
+# Should show llama3.2:3b (or your configured model) in the list
+```
+
+**Custom Ollama URL not working:**
+```bash
+# Test connectivity to your custom Ollama instance
+curl http://your-ollama-server:11434/api/tags
+
+# Make sure the Ollama server allows external connections
+# You may need to start Ollama with: OLLAMA_HOST=0.0.0.0 ollama serve
 ```
 
 **Restart the server:**
@@ -151,8 +202,9 @@ python3 server.py
 
 **Port 8000 already in use:**
 ```bash
-# Edit server.py and change PORT = 8000 to another port like 8080
-# Then access via http://localhost:8080/santa-tracker.html
+# Use a different port with environment variable
+PORT=8080 python3 server.py
+# Then access via http://localhost:8080/
 ```
 
 **Ollama not found:**
@@ -181,14 +233,22 @@ const prompt = `You are Santa Claus! Write a cheerful, warm message...`;
 
 ### Changing the AI Model
 
-Replace `llama3.2` with any Ollama-compatible model:
+Use the `OLLAMA_MODEL` environment variable to specify any Ollama-compatible model:
 
-```javascript
-body: JSON.stringify({
-  model: "llama3.2",  // Try: mistral, phi, gemma, etc.
-  prompt: prompt,
-  // ...
-})
+```bash
+# Use Mistral instead of Llama
+OLLAMA_MODEL=mistral:7b python3 server.py
+
+# Use Phi3 mini model
+OLLAMA_MODEL=phi3:mini python3 server.py
+
+# Use Gemma model
+OLLAMA_MODEL=gemma:7b python3 server.py
+```
+
+Available models depend on what you have installed in Ollama. Check with:
+```bash
+ollama list
 ```
 
 ### Customizing Santa's Route

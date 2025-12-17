@@ -340,12 +340,20 @@
                         </p>
                       </div>
                     )}
+                    
+                    <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                      <p className="text-xs text-gray-600">
+                        <strong>Setup:</strong> Make sure Ollama is running with: <code className="bg-gray-100 px-2 py-1 rounded">ollama serve</code>
+                        <br />
+                        Install {ollamaModel}: <code className="bg-gray-100 px-2 py-1 rounded">ollama pull {ollamaModel}</code>
+                      </p>
+                    </div>
                   </div>
                 )}
 
                 <div className="text-center mt-8 text-blue-200">
                   <p className="text-sm">
-                    🎄 Current Time: {currentTime.toLocaleTimeString()} 🎄
+                    🎄 Current Local Time: {currentTime.toLocaleTimeString()} 🎄
                   </p>
                   <p className="text-xs mt-2 opacity-75">
                     Santa starts his journey on Christmas Eve at 6 PM and travels westward around the world!

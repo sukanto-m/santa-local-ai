@@ -14,7 +14,7 @@ import urllib.error
 # Dynamic configuration using environment variables
 PORT = int(os.environ.get('PORT', 8000))
 OLLAMA_URL = os.environ.get('OLLAMA_URL', 'http://localhost:11434')
-OLLAMA_MODEL = os.environ.get('OLLAMA_MODEL', 'llama3.2:3b')
+OLLAMA_MODEL = os.environ.get('OLLAMA_MODEL', 'llama3.2')
 
 class CORSRequestHandler(http.server.SimpleHTTPRequestHandler):
     def end_headers(self):
